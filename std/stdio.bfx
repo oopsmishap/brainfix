@@ -27,17 +27,6 @@
    to_string_4(x)   - Converts int to string, max 4 digits (0-9999)
    to_binary_str(x) - Converts number to 8-bit binary representation (as string)
    to_hex_str(x)    - Converts number to 8-bit hexadecimal representation (as string)
-
-   CURSOR/SCREEN MANIPULATION
-   
-   cursor_left(n)          - Move cursor left by n (default = 1)
-   cursor_right(n)         - Move cursor right by n (default = 1)
-   cursor_up(n)            - Move cursor up by n (default = 1)
-   cursor_down(n)          - Move cursor down by n (default = 1)
-   cursor_home()           - Move cursor to top-left of the screen
-   cursor_to(line, column) - Move cursor to given position
-   clear_screen()          - Clear the entire screen
-   clear_line()            - Clear the current line
 */
 
 function printc(&c)
@@ -270,90 +259,4 @@ function str = to_string_4(x)
     }
 
     str[idx] = ones + '0';
-}
-
-function clear_screen()
-{
-    cursor_home();
-    printc(27);
-    prints("[0J");
-}
-
-function clear_line()
-{
-    printc(13);
-    printc(27);
-    prints("[0K");
-}
-
-function cursor_to(&line, &column)
-{
-    printc(27);
-    printc('[');
-    prints(to_string(line));
-    printc(';');
-    prints(to_string(column));
-    printc('H');
-}
-
-function cursor_up(n)
-{
-    printc(27);
-    printc('[');
-    prints(to_string(n));
-    printc('A');
-}
-
-function cursor_up()
-{
-    printc(27);
-    prints("[1A");
-}
-
-function cursor_down(n)
-{
-    printc(27);
-    printc('[');
-    prints(to_string(n));
-    printc('B');
-}
-
-function cursor_down()
-{
-    printc(27);
-    prints("[1B");
-}
-
-function cursor_right(n)
-{
-    printc(27);
-    printc('[');
-    prints(to_string(n));
-    printc('C');
-}
-
-function cursor_right()
-{
-    printc(27);
-    prints("[1C");
-}
-
-function cursor_left(n)
-{
-    printc(27);
-    printc('[');
-    prints(to_string(n));
-    printc('D');
-}
-
-function cursor_left()
-{
-    printc(27);
-    prints("[1D");
-}
-
-function cursor_home()
-{
-    printc(27);
-    prints("[H");
 }

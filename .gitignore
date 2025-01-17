@@ -1,17 +1,7 @@
-# macOS system file
-.DS_Store
+# cmkr
+build*/
+cmake-build*/
+CMakerLists.txt
+CMakeLists.txt.user
 
-# any compiled files
-*.bf
-
-# testing files
-*.test
-.bfxtest*
-
-# generated files and executables
-src/*.o
-src/interpreter/*.o
-
-bfint
-bfx
-
+.vscode/

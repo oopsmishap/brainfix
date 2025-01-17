@@ -10,36 +10,12 @@ To run the resulting Brainf\*ck code, you can use any (third party) BrainF\*ck i
 To build the project, simply cd into the root folder of this project and run make:
 
 ```
-git clone https://github.com/jorenheit/brainfix
+git clone https://github.com/oopsmishap/brainfix
 cd brainfix
-make
+cmake -B build -T ClangCL
 ```
 
-To install the resulting binaries and standard library files to your PATH, run as root:
-
-```
-make install
-```
-
-By default, this will copy the binaries (bfx and bfint) to /usr/local/bin and the library files to /usr/include/bfx. These directories can be changed by editing the first couple of lines in the Makefile.
-
-If for some reason you want to change the grammar specification, you can let bisonc++ and flexc++ (see below) regenerate the sourcecode for the scanner (file: lexer) and parser (file: grammar) by running
-
-```
-make regenerate
-```
-
-To remove all object files, run
-
-```
-make clean
-```
-
-To undo all actions performed by `make install`, run as root
-
-```
-make uninstall
-```
+If for some reason you want to change the grammar specification, you can let bisonc++ and flexc++ (see below) regenerate the sourcecode for the lexer (file: lexer.l) and parser (file: grammar.y) by running
 
 ## `bfint` and ncurses
 
@@ -56,29 +32,33 @@ The lexical scanner and parser that are used to parse the Brainfix language are 
 Building the project results will produce the compiler executable `bfx`. The syntax for invoking the compiler can be inspected by running `bfx -h`:
 
 ```
-Usage: bfx [options] <target(.bfx)>
-Options:
--h, --help          Display this text.
--t, --type [Type]   Specify the number of bytes per BF-cell, where [Type] is one of
-                    int8, int16 and int32 (int8 by default).
--I [path to folder] Specify additional include-path.
-                      This option may appear multiple times to specify multiple folders.
--O0                 Do NOT do any constant expression evaluation.
--O1                 Do constant expression evaluation (default).
---max-unroll-iterations [N]
-                    Specify the maximum number of loop-iterations that will be unrolled.
-                      Defaults to 20.
---random            Enable random number generation (generates the ?-symbol).
-                      Your interpreter must support this extension!
---profile [file]    Write the memory profile to a file. In this file, the number of visits
-                      to each of the cells is listed.
---no-bcr            Disable break/continue/return statements for more compact output.
---no-multiple-inclusion-warning
-                    Do not warn when a file is included more than once, or when files
-                      with duplicate names are included.
---no-assert-warning
-                    Do not warn when static_assert is used in non-constant context.
--o [file, stdout]   Specify the output stream/file (default stdout).
+Usage: compiler [options] target.bfx
+
+Positional arguments:
+  target                           Input target file (.bfx) [required]
+
+Optional arguments:
+  -h, --help                       shows help message and exits
+  -v, --version                    prints version information and exits
+  -t, --type                       Specify the number of bytes per BF-cell, where [Type] is one of int8, 
+                                   int16, and int32 (int8 by default). [nargs=0..1] [default: "int8"]
+  -I, --include-path               Specify additional include-path(s). This option may appear multiple 
+                                   times to specify multiple folders. [nargs=0..1] [default: {}] [may be repeated]
+  -o, --output                     Specify the output stream/file (default stdout). [nargs=0..1] [default: "stdout"]
+  -O0                              Do NOT do any constant expression evaluation.
+  -O1                              Do constant expression evaluation (default).
+  --max-unroll-iterations          Specify the maximum number of loop-iterations that will be unrolled. 
+                                   Defaults to 20. [nargs=0..1] [default: 20]
+  --test                           Produce test-files and write a list of generated files to [file], to be used by 
+                                   bfint for unit-testing. [nargs=0..1] [default: ""]
+  --random                         Enable random number generation (generates the ?-symbol). Your interpreter 
+                                   must support this extension!
+  --profile                        Write the memory profile to a file. In this file, the number of visits to each 
+                                   of the cells is listed. [nargs=0..1] [default: ""]
+  --no-bcr                         Disable break/continue/return statements for more compact output.
+  --no-multiple-inclusion-warning  Do not warn when a file is included more than once, or when files with 
+                                   duplicate names are included.
+  --no-assert-warning              Do not warn when static_assert is used in non-constant context.
 
 Example: bfx -o program.bf -O1 -I ~/my_bfx_project -t int16 program.bfx
 ```
@@ -96,9 +76,6 @@ Options:
                     int8, int16 and int32 (int8 by default).
 -n [N]              Specify the number of cells (30,000 by default).
 -o [file, stdout]   Specify the output stream (defaults to stdout).
-
---gaming            Enable gaming-mode.
---gaming-help       Display additional information about gaming-mode.
 --random            Enable Random Brainf*ck extension (support ?-symbol)
 --rand-max [N]      Specifiy maximum value returned by RNG.
                       Defaults to maximum supported value of cell-type
@@ -912,21 +889,6 @@ All functions below are defined in `BFX_INCLUDE/stdio.bfx`:
 ##### Big Numbers
 
 On the default architecture, where the cells are only 1 byte long, values can never grow beyond 255. It is therefore sufficient to assume that number will never grow beyond 3 digits. However, when the target architecture contains larger cells, the functions suffixed with `_4` can be used to extend some facilities to 4 digits. Printing and scanning even larger digits is also possible, but functions to this end are not provided by the standard library for the simple reason that these functions would be terribly slow and impractical.
-
-##### Cursor and Screen Manipulation
-
-The functions below are also defined in `stdio.bfx` and can be used on ANSI-compatible terminals to move the cursor or clear (parts of) the screen. This can be used to print to the same region of the screen multiple times, allowing for better ascii-graphics. The ANSI sequences used to implement these functions are all supported by `bfint`'s gaming mode, so programs using these functions can be run both with and without `--gaming` enabled.
-
-| function                  | description                           |
-| ------------------------- | ------------------------------------- |
-| `cursor_left(n)`          | Move cursor left by n (default = 1)   |
-| `cursor_right(n)`         | Move cursor right by n (default = 1)  |
-| `cursor_up(n)`            | Move cursor up by n (default = 1)     |
-| `cursor_down(n)`          | Move cursor down by n (default = 1)   |
-| `cursor_home()`           | Move cursor to top-left of the screen |
-| `cursor_to(line, column)` | Move cursor to given position         |
-| `clear_screen()`          | Clear the entire screen               |
-| `clear_line()`            | Clear the current line                |
 
 #### Math
 
