@@ -36,7 +36,6 @@ BFInterpreter::BFInterpreter(Options const& opt)
     , d_randomEnabled(opt.randomEnabled)
     , d_randMax(opt.randMax)
     , d_randomWarningEnabled(opt.randomWarningEnabled)
-    , d_gamingMode(opt.gamingMode)
     , d_testFile(opt.testFile)
 {
     // init code
@@ -180,21 +179,11 @@ int BFInterpreter::run(std::istream& in, std::ostream& out)
             minus();
             break;
         case PRINT:
-        {
-            if (d_gamingMode)
-                printCurses();
-            else
-                print(out);
+            print(out);
             break;
-        }
         case READ:
-        {
-            if (d_gamingMode)
-                readCurses();
-            else
-                read(in);
+            read(in);
             break;
-        }
         case START_LOOP:
             startLoop();
             break;
@@ -222,12 +211,7 @@ int BFInterpreter::run(std::istream& in, std::ostream& out)
                     "=========================== !!!!!! "
                     "==============================\n";
 
-                if (!d_gamingMode)
-                    std::cerr << warning;
-                else
-                {
-                    assert(false);
-                }
+                std::cerr << warning;
                 warned = true;
             }
             break;
@@ -348,11 +332,6 @@ void BFInterpreter::print(std::ostream& out)
     out << (char)d_array[d_arrayPointer] << std::flush;
 }
 
-void BFInterpreter::printCurses()
-{
-    assert(false && "printCurses() called but not compiled with USE_CURSES");
-}
-
 void BFInterpreter::handleAnsi(std::string& ansiStr, bool const force)
 {
     assert(false && "handleAnsi called without USE_CURSES defined");
@@ -363,11 +342,6 @@ void BFInterpreter::read(std::istream& in)
     char c;
     in.get(c);
     d_array[d_arrayPointer] = c;
-}
-
-void BFInterpreter::readCurses()
-{
-    assert(false && "readCurses() called but not compiled with USE_CURSES");
 }
 
 void BFInterpreter::random()

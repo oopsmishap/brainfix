@@ -22,7 +22,6 @@ struct Options
     bool        randomEnabled{false};
     int         randMax{0};
     bool        randomWarningEnabled{true};
-    bool        gamingMode{false};
 };
 
 class BFInterpreter
@@ -42,7 +41,6 @@ class BFInterpreter
     bool const        d_randomEnabled{false};
     int const         d_randMax{0};
     bool const        d_randomWarningEnabled{true};
-    bool const        d_gamingMode{false};
     std::string const d_testFile;
 
     enum Ops : char

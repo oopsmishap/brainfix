@@ -68,18 +68,20 @@ Example: bfx -o program.bf -O1 -I ~/my_bfx_project -t int16 program.bfx
 To run the resulting BF, call the included interpreter or any other utility that was designed to run or compile BF. When using the included `bfint` interpreter, its syntax can be inspected by running `bfint -h`:
 
 ```
-$ bfint -h
-Usage: ./bfint [options] <target(.bf)>
-Options:
--h, --help          Display this text.
--t, --type [Type]   Specify the number of bytes per BF-cell, where [Type] is one of
-                    int8, int16 and int32 (int8 by default).
--n [N]              Specify the number of cells (30,000 by default).
--o [file, stdout]   Specify the output stream (defaults to stdout).
---random            Enable Random Brainf*ck extension (support ?-symbol)
---rand-max [N]      Specifiy maximum value returned by RNG.
-                      Defaults to maximum supported value of cell-type
---no-random-warning Don't display a warning when ? occurs without running --random.
+Usage: bfint [options] target
+
+Positional arguments:
+  target               The input Brainf*ck (.bf) file. [required]
+
+Optional arguments:
+  -h, --help           shows help message and exits
+  -v, --version        prints version information and exits
+  -t, --type           Specify the number of bytes per BF-cell: int8, int16, or int32 (default: int8). [nargs=0..1] [default: "int8"]
+  -n                   Specify the number of cells (default: 30,000). [nargs=0..1] [default: 30000]
+  --test               Run the tests specified by the file. [nargs=0..1] [default: ""]
+  --random             Enable Random Brainf*ck extension (support ?-symbol).
+  --rand-max           Specify maximum value returned by RNG (default: cell-type max). [nargs=0..1] [default: 0]
+  --no-random-warning  Disable warning when ? occurs without --random.
 
 Example: ./bfint --random -t int16 -o output.txt program.bf
 ```
